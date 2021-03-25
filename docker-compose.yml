@@ -1,0 +1,40 @@
+version: '2.3'
+
+volumes:
+  ssh_host_keys:
+  data:
+
+services:
+  sshd:
+    build: .
+    image: docker.io/fphammerle/sftpd
+    container_name: sftpd
+    environment:
+      SSH_CLIENT_PUBLIC_KEYS: |
+        ssh-rsa ...
+        ssh-rsa ...
+    read_only: true
+    volumes:
+    - type: volume
+      source: ssh_host_keys
+      target: /etc/ssh/host_keys
+      read_only: false
+    - type: volume
+      source: data
+      target: /data
+      read_only: false
+    - type: tmpfs
+      target: /home/nonroot/.ssh # authorized_keys
+      tmpfs:
+        # nosuid,nodev,noexec added by default
+        size: 16k
+    ports:
+    - '127.0.0.1:2200:2200'
+    cap_drop: [ALL]
+    cap_add: [SETUID, SETGID, SYS_CHROOT]
+    security_opt: [no-new-privileges]
+    # docker-compose >=2.2,<3
+    cpus: 0.8
+    mem_limit: 64M
+
+# https://docs.docker.com/compose/compose-file/compose-file-v2/
