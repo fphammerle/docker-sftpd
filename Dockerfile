@@ -1,4 +1,4 @@
-FROM docker.io/alpine:3.17.0
+FROM docker.io/alpine:3.17.1
 
 ARG OPENSSH_SERVER_PACKAGE_VERSION=9.1_p1-r1
 ENV SSHD_HOST_KEYS_DIR=/etc/ssh/host_keys
